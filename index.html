@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Task Distributor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+      body {
+        font-family: 'Poppins', sans-serif;
+      }
+      @keyframes fade-in {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .animate-fade-in {
+        animation: fade-in 0.5s ease-out forwards;
+      }
+      @keyframes fade-in-out {
+        0% { opacity: 0; transform: translate(-50%, -20px); }
+        20% { opacity: 1; transform: translate(-50%, 0); }
+        80% { opacity: 1; transform: translate(-50%, 0); }
+        100% { opacity: 0; transform: translate(-50%, -20px); }
+      }
+      .animate-fade-in-out {
+        animation: fade-in-out 3s ease-in-out forwards;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react-dom/client": "https://aistudiocdn.com/react-dom@^19.2.0/client",
+    "react": "https://aistudiocdn.com/react@^19.2.0"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body>
+    <div id="root"></div>
+    <script type="module">
+        import React, { useState, useMemo, useEffect } from 'react';
+        import ReactDOM from 'react-dom/client';
+
+        // --- CONSTANTS ---
+        const LEADER_WHATSAPP_NUMBER = '201012274983';
+        const USERS = [
+            { id: '202002255', name: 'Ebtehal Mohamed Mohamed Elsayed' },
+            { id: '202301520', name: 'Ahmed Abubakr Nazir Elsayed' },
+            { id: '202301150', name: 'Ahmed Mohamed Abdelrahman Mohamed Selim' },
+            { id: '202301128', name: 'Islam Abdelmonem Ibrahim Mohamed Hamdy' },
+            { id: '202301164', name: 'Asmaa Nader Abdelzaher Ali' },
+            { id: '202301390', name: 'Ashraf Abdelfattah Abdeldin Abdelmonem' },
+            { id: '202305700', name: 'Saja Mohamed Mohamed Mousa' },
+            { id: '202305223', name: 'Shatha Raed Mohamed Omar Mousa' },
+            { id: '202301349', name: 'Shahd Mohamed Tawfik Abdelsalam' },
+            { id: '202301112', name: 'Safwat Mohamed Safwat Selim Quider' },
+            { id: '202102485', name: 'Abdulrahman Barakat Abbas Ahmed' },
+            { id: '202301323', name: 'Abdulrahman Gabr Barakat Ali Elgamal' },
+            { id: '202301276', name: 'Abdullah Abdelkarim Soliman Mohamed Badawy' },
+            { id: '202301473', name: 'Omar Hassan Ahmed Mohamed' },
+            { id: '202301518', name: 'Fikry Fayek Fikry Gerges Gerges' },
+            { id: '202301127', name: 'Marian Maher Ibrahim Habib' },
+            { id: '202301424', name: 'Mohamed Elsayed Mohamed Abdel-aal' },
+            { id: '202301123', name: 'Mohamed Sami Abdelhamid Ramadan Metwally' },
+            { id: '202301125', name: 'Mohamed Nashaat Abdelbaqi El-sebaei Ibrahim' },
+            { id: '202301411', name: 'Mahmoud Ibrahim Othman Ibrahim Shams' },
+            { id: '202301124', name: 'Marwan Mahmoud Elsayed Abdellatif' },
+            { id: '202301173', name: 'Mariam Ramadan Haroun Yahya Nwegy' },
+            { id: '202301311', name: 'Mariam Tarek Abdelrazek Sakr' },
+            { id: '202301449', name: 'Mariam Mohamed Saber Gouda Saghfan' },
+            { id: '202301523', name: 'Malak Mohamed Mahmoud Elshaer' },
+            { id: '202305281', name: 'Manar Hany Mohanna Gweida' },
+            { id: '202305642', name: 'Nour Bastawisy Mohamed Bastawisy Ghoneim' },
+            { id: '202305238', name: 'Nourhan Ahmed Mohamed El-sultan El-morsy' },
+            { id: '202301482', name: 'Walid Mohamed Saeed Mohamed Abu Bakr' },
+            { id: '202301110', name: 'Youssef Ehab Lotfy Abdelsalam Abdeldayem' },
+            { id: '202301355', name: 'Youssef Reda Ashour Mohamed' },
+            { id: '202301362', name: 'Youssef Mohamed Farid Mohamed Ali' }
+        ];
+        const TASKS = [
+            {
+                title: 'Data Collection for Website',
+                description: 'Your task is to collect the necessary data for the website content.',
+                url: 'https://form.svhrt.com/691ad75b0388696293171b06'
+            },
+            {
+                title: 'Card Design Submissions',
+                description: 'Your task is to submit designs for the profile cards.',
+                url: 'https://form.svhrt.com/691ad87dec1856c9e5b81dbd'
+            },
+            {
+                title: 'Poster Submissions',
+                description: 'Your task is to submit designs and images for the poster.',
+                url: 'https://form.svhrt.com/691ada2aec1856c9e5b84419'
+            },
+            {
+                title: 'Video Submissions',
+                description: 'Your task is to find and submit videos related to the topic.',
+                url: 'https://form.svhrt.com/691adb0803886962931771fc'
+            }
+        ];
+
+        // --- COMPONENTS ---
+
+        const Hero = () => {
+          return (
+            React.createElement('header', { className: "mb-12" },
+              React.createElement('h1', { className: "text-4xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-lime-400 to-green-400 pb-3" },
+                "Antibiotic Resistance: The Hidden Enemy"
+              ),
+              React.createElement('p', { className: "text-lg md:text-xl text-slate-400 mt-4" },
+                "An awareness project about bacterial resistance mechanisms and prevention methods."
+              ),
+              React.createElement('p', { className: "mt-6 max-w-2xl mx-auto text-slate-300" },
+                "Antibiotic resistance occurs when bacteria change in response to the use of these medicines, making infections harder to treat and increasing the risk of disease spread. This project aims to raise awareness of this serious phenomenon."
+              )
+            )
+          );
+        };
+
+        const SearchIcon = () => (
+            React.createElement('svg', { xmlns: "http://www.w3.org/2000/svg", className: "h-5 w-5", viewBox: "0 0 20 20", fill: "currentColor" },
+                React.createElement('path', { fillRule: "evenodd", d: "M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z", clipRule: "evenodd" })
+            )
+        );
+
+        const SearchForm = ({ searchInput, setSearchInput, handleSearch }) => {
+          return (
+            React.createElement('form', { onSubmit: handleSearch, className: "flex flex-col sm:flex-row gap-4 items-center justify-center" },
+              React.createElement('input', {
+                type: "text",
+                value: searchInput,
+                onChange: (e) => setSearchInput(e.target.value),
+                placeholder: "Enter your ID here...",
+                className: "w-full sm:w-80 px-5 py-3 text-lg bg-slate-800 border-2 border-slate-700 rounded-full focus:ring-2 focus:ring-lime-500 focus:border-lime-500 focus:outline-none transition-all duration-300 text-center"
+              }),
+              React.createElement('button', {
+                type: "submit",
+                className: "w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-3 bg-lime-600 text-white font-bold rounded-full hover:bg-lime-500 focus:outline-none focus:ring-4 focus:ring-lime-500/50 transform hover:scale-105 transition-all duration-300"
+              },
+                React.createElement(SearchIcon),
+                React.createElement('span', null, "View Task")
+              )
+            )
+          );
+        };
+        
+        const TaskResultCard = ({ result }) => {
+            return (
+                React.createElement('div', { className: "bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl p-6 md:p-8 text-center shadow-2xl shadow-lime-500/10 transition-all duration-500 animate-fade-in" },
+                    React.createElement('h2', { className: "text-2xl font-bold text-lime-400" }, `Hello, ${result.user.name}`),
+                    React.createElement('p', { className: "mt-4 text-lg text-slate-300" }, "Your assigned task is:"),
+                    React.createElement('h3', { className: "mt-2 text-3xl font-bold text-white" }, result.task.title),
+                    React.createElement('p', { className: "mt-4 text-slate-400 max-w-md mx-auto" }, result.task.description),
+                    React.createElement('a', {
+                        href: result.task.url,
+                        target: "_blank",
+                        rel: "noopener noreferrer",
+                        className: "mt-8 inline-block px-10 py-3 bg-gradient-to-r from-lime-500 to-green-500 text-white font-bold text-lg rounded-full hover:shadow-lg hover:shadow-lime-500/40 transform hover:scale-105 transition-all duration-300"
+                    }, "Start Task")
+                )
+            );
+        };
+
+        const DesignInterestModal = ({ isOpen, onClose }) => {
+            const [programName, setProgramName] = useState('');
+
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                if (!programName.trim()) return;
+
+                const message = `Hello, I am proficient in design using "${programName.trim()}" and would like to contribute to the project's designs.`;
+                const whatsappUrl = `https://wa.me/${LEADER_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+
+                window.open(whatsappUrl, '_blank');
+                setProgramName('');
+                onClose();
+            };
+
+            if (!isOpen) return null;
+
+            return (
+                React.createElement('div', {
+                    className: "fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4",
+                    onClick: onClose
+                },
+                    React.createElement('div', {
+                        className: "bg-slate-800 rounded-2xl shadow-2xl p-8 w-full max-w-md mx-auto relative border border-slate-700",
+                        onClick: (e) => e.stopPropagation()
+                    },
+                        React.createElement('button', { onClick: onClose, className: "absolute top-4 right-4 text-slate-400 hover:text-white transition-colors" },
+                            React.createElement('svg', { xmlns: "http://www.w3.org/2000/svg", className: "h-6 w-6", fill: "none", viewBox: "0 0 24 24", stroke: "currentColor" },
+                                React.createElement('path', { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M6 18L18 6M6 6l12 12" })
+                            )
+                        ),
+                        React.createElement('h3', { className: "text-2xl font-bold text-center text-lime-400 mb-6" }, "Volunteer for Design"),
+                        React.createElement('p', { className: "text-slate-300 text-center mb-6" },
+                            "If you are proficient with a design program, enter its name below and send a message to join the design team."
+                        ),
+                        React.createElement('form', { onSubmit: handleSubmit },
+                            React.createElement('input', {
+                                type: "text",
+                                value: programName,
+                                onChange: (e) => setProgramName(e.target.value),
+                                placeholder: "e.g., Photoshop, Canva, Figma...",
+                                className: "w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg focus:ring-2 focus:ring-lime-500 focus:border-lime-500 focus:outline-none transition-all duration-300 text-center",
+                                required: true
+                            }),
+                            React.createElement('button', {
+                                type: "submit",
+                                className: "w-full mt-6 px-8 py-3 bg-lime-600 text-white font-bold rounded-lg hover:bg-lime-500 focus:outline-none focus:ring-4 focus:ring-lime-500/50 transform hover:scale-105 transition-all duration-300"
+                            }, "Send to Leader via WhatsApp")
+                        )
+                    )
+                )
+            );
+        };
+        
+        const DesignIcon = () => (
+            React.createElement('svg', { xmlns: "http://www.w3.org/2000/svg", className: "h-6 w-6", fill: "none", viewBox: "0 0 24 24", stroke: "currentColor", strokeWidth: 2 },
+                React.createElement('path', { strokeLinecap: "round", strokeLinejoin: "round", d: "M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z" })
+            )
+        );
+
+        const PresentationIcon = () => (
+            React.createElement('svg', { xmlns: "http://www.w3.org/2000/svg", className: "h-6 w-6", fill: "none", viewBox: "0 0 24 24", stroke: "currentColor", strokeWidth: 2 },
+                React.createElement('path', { strokeLinecap: "round", strokeLinejoin: "round", d: "M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a2 2 0 01-2-2V7a2 2 0 012-2h2.586a1 1 0 01.707.293l2.414 2.414a1 1 0 00.707.293H17z" })
+            )
+        );
+
+        const FloatingActionButtons = () => {
+            const [isModalOpen, setIsModalOpen] = useState(false);
+
+            const handlePresentationClick = () => {
+                const message = "Hello, I am skilled in public speaking and presenting and would like to participate in the project presentation.";
+                const whatsappUrl = `https://wa.me/${LEADER_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+                window.open(whatsappUrl, '_blank');
+            };
+
+            return (
+                React.createElement(React.Fragment, null,
+                    React.createElement('div', { className: "fixed bottom-6 right-6 flex flex-col items-center gap-4 z-50" },
+                        React.createElement('div', { className: "flex flex-col items-center gap-2 text-center" },
+                            React.createElement('button', {
+                                onClick: () => setIsModalOpen(true),
+                                className: "flex justify-center items-center h-16 w-16 bg-lime-600 text-white rounded-full shadow-lg hover:bg-lime-500 transition-all duration-300 transform hover:scale-110",
+                                'aria-label': "Volunteer for Design"
+                            }, React.createElement(DesignIcon)),
+                            React.createElement('span', { className: "text-xs font-medium text-slate-300 max-w-[100px]" }, "If you're interested in Design")
+                        ),
+                        React.createElement('div', { className: "flex flex-col items-center gap-2 text-center" },
+                            React.createElement('button', {
+                                onClick: handlePresentationClick,
+                                className: "flex justify-center items-center h-16 w-16 bg-green-700 text-white rounded-full shadow-lg hover:bg-green-600 transition-all duration-300 transform hover:scale-110",
+                                'aria-label': "Volunteer for Presentation"
+                            }, React.createElement(PresentationIcon)),
+                             React.createElement('span', { className: "text-xs font-medium text-slate-300 max-w-[100px]" }, "If you're interested in Presenting")
+                        )
+                    ),
+                    React.createElement(DesignInterestModal, { isOpen: isModalOpen, onClose: () => setIsModalOpen(false) })
+                )
+            );
+        };
+
+        // --- MAIN APP ---
+        const App = () => {
+            const [searchInput, setSearchInput] = useState('');
+            const [searchResult, setSearchResult] = useState(null);
+            const [error, setError] = useState(null);
+            const [showWelcome, setShowWelcome] = useState(true);
+
+            useEffect(() => {
+                const timer = setTimeout(() => {
+                    setShowWelcome(false);
+                }, 3000); // Hide after 3 seconds
+                return () => clearTimeout(timer);
+            }, []);
+
+            const assignedTasks = useMemo(() => {
+                let seed = 0;
+                for (let i = 0; i < "task_seed".length; i++) {
+                    seed += "task_seed".charCodeAt(i);
+                }
+                const pseudoRandom = () => {
+                    let x = Math.sin(seed++) * 10000;
+                    return x - Math.floor(x);
+                };
+
+                const shuffledUsers = [...USERS].sort(() => pseudoRandom() - 0.5);
+                const assignments = new Map();
+                shuffledUsers.forEach((user, index) => {
+                    const task = TASKS[index % TASKS.length];
+                    assignments.set(user.id, { user, task });
+                });
+                return assignments;
+            }, []);
+
+            const handleSearch = (e) => {
+                e.preventDefault();
+                setError(null);
+                setSearchResult(null);
+
+                if (!searchInput.trim()) {
+                    setError('Please enter your ID.');
+                    return;
+                }
+
+                const result = assignedTasks.get(searchInput.trim());
+                if (result) {
+                    setSearchResult(result);
+                } else {
+                    setError('ID not found. Please check the ID and try again.');
+                }
+            };
+
+            return (
+                React.createElement('div', { className: "relative min-h-screen bg-slate-900 text-slate-200 overflow-hidden flex flex-col" },
+                    showWelcome && React.createElement('div', { className: "fixed top-5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-lime-500 to-green-500 text-white font-bold px-6 py-3 rounded-full shadow-lg z-50 animate-fade-in-out" },
+                        "Let's Go! Welcome to the Project!"
+                    ),
+                    React.createElement('div', { className: "absolute top-0 left-0 -z-10 h-full w-full bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(101,163,13,0.3),rgba(255,255,255,0))]" }),
+                    React.createElement('main', { className: "container mx-auto px-4 py-8 md:py-16 relative z-10 flex-grow" },
+                        React.createElement('div', { className: "max-w-3xl mx-auto text-center" },
+                            React.createElement(Hero),
+                            React.createElement(SearchForm, {
+                                searchInput: searchInput,
+                                setSearchInput: setSearchInput,
+                                handleSearch: handleSearch
+                            }),
+                            React.createElement('div', { className: "mt-8 min-h-[200px]" },
+                                error && React.createElement('p', { className: "text-red-400 bg-red-900/50 rounded-lg p-3" }, error),
+                                searchResult && React.createElement(TaskResultCard, { result: searchResult })
+                            )
+                        )
+                    ),
+                    React.createElement('footer', { className: "text-center py-6 text-slate-500 text-sm" },
+                        "Designed by TheBoss"
+                    ),
+                    React.createElement(FloatingActionButtons)
+                )
+            );
+        }
+
+        // --- RENDER ---
+        const rootElement = document.getElementById('root');
+        const root = ReactDOM.createRoot(rootElement);
+        root.render(React.createElement(React.StrictMode, null, React.createElement(App)));
+    </script>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>
