@@ -1,0 +1,5 @@
+{
+  "name": "Task Distributor",
+  "description": "An application to randomly distribute tasks among team members and allow them to view their assigned task by entering their ID.",
+  "requestFramePermissions": []
+}
